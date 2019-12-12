@@ -7,6 +7,27 @@
     <groupId>biz.braham</groupId>
     <artifactId>rss-reader</artifactId>
     <version>1.0</version>
-
+    <properties>
+        <java.version>12</java.version>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <release>12</release>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1</version>
+        </dependency>
+    </dependencies>
 
 </project>
