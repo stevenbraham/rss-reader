@@ -1,5 +1,8 @@
 package biz.braham.rssreader;
 
+import biz.braham.rssreader.models.Feed;
+import biz.braham.rssreader.models.FeedList;
+
 import java.util.Scanner;
 
 /**
@@ -7,11 +10,22 @@ import java.util.Scanner;
  */
 public class RssReader {
 
+    private FeedList<Feed> feeds = new FeedList();
 
-    public static void main(String args[]) {
+    public RssReader() {
+        this.feeds = FeedList.initFromDiskFile();
+    }
+
+    public static void main(String[] args) {
         System.out.println("Welcome to RSS Reader");
         RssReader app = new RssReader();
         app.displayMainMenu();
+    }
+
+    public void listFeeds() {
+        this.feeds.forEach(feed -> {
+            System.out.println(feed.getName());
+        });
     }
 
     private void displayMainMenu() {
@@ -20,6 +34,9 @@ public class RssReader {
         System.out.println("2: " + "Exit app");
         options choice = readOption();
         switch (choice) {
+            case LIST_FEEDS:
+                listFeeds();
+                break;
             case EXIT_APP:
                 exitApp();
                 break;
