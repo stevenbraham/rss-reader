@@ -35,7 +35,7 @@ public class Feeds {
 
             System.out.println("Name:\t" + feedName);
             System.out.println("Url:\t" + feedUrl);
-            System.out.println("Is this correct? [y/n]");
+            System.out.print("Is this correct? [y/n]");
             if (input.nextLine().equals("y")) {
                 Feed newFeed = feedsRepository.store(feedName, feedUrl);
                 System.out.println("Added new feed with id " + newFeed.getId());
@@ -52,12 +52,40 @@ public class Feeds {
 
     }
 
+    @ShellMethod("Edit a feed with a given id")
+    public void editFeed(int feedId) {
+        try {
+            Feed feed = feedsRepository.getFeedById(feedId);
+            Scanner input = new Scanner(System.in);
+            System.out.println("Type a new name for this feed:");
+            System.out.println("[Current value: " + feed.getName() + "]");
+            String feedName = input.nextLine();
+            System.out.println("Type a new url for this feed:");
+            System.out.println("[Current value: " + feed.getUrl() + "]");
+            String feedUrl = input.nextLine();
+
+            if (!feedName.equals("") && !feedName.equals(feed.getName())) {
+                feed.setName(feedName);
+            }
+
+            if (!feedUrl.equals("") && !feedUrl.equals(feed.getUrl().toString())) {
+                feed.setUrl(new URL(feedUrl));
+            }
+            feedsRepository.update(feed);
+            System.out.println("Item updated");
+
+        } catch (FeedNotFoundException e) {
+            System.out.println("Feed #" + feedId + " does not exist");
+        } catch (Exception e) {
+            System.out.println("There was an unexpected error processing your request");
+        }
+    }
+
     @ShellMethod("Delete a feed with a given id")
     public void deleteFeed(int feedId) {
         try {
-
             Scanner input = new Scanner(System.in);
-            System.out.println("Are you sure you want to delete this feed?");
+            System.out.print("Are you sure you want to delete this feed?");
             if (input.nextLine().equals("y")) {
                 feedsRepository.delete(feedId);
                 System.out.println("Feed #" + feedId + " has been deleted");

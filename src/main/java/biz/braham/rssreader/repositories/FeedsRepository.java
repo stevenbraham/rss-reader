@@ -16,4 +16,9 @@ public interface FeedsRepository {
     boolean delete(int feedId) throws FeedNotFoundException;
 
     boolean delete(Feed feed) throws FeedNotFoundException;
+
+    Feed getFeedById(int feedId) throws FeedNotFoundException;
+
+    boolean update(Feed feed) throws FeedNotFoundException;
+
 }

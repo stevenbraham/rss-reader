@@ -104,6 +104,12 @@ public class DiskBasedFeedList implements FeedsRepository {
         new XMLOutputter().output(new Document(feedsRoot), new FileWriter(FEEDS_LOCATION));
     }
 
+    @Override
+    public Feed getFeedById(int feedId) throws FeedNotFoundException {
+        int index = feedIdToIndex(feedId);
+        return getAll().get(index);
+    }
+
     /**
      * Converts a feed id to an actual index in the feed list
      *
@@ -140,4 +146,20 @@ public class DiskBasedFeedList implements FeedsRepository {
     public boolean delete(Feed feed) throws FeedNotFoundException {
         return delete(feed.getId());
     }
+
+    public boolean update(Feed feed) throws FeedNotFoundException {
+        try {
+            //update feed in internal list, store on disk and update the id list
+            getAll().set(feedIdToIndex(feed.getId()), feed);
+            writeToDisk();
+            this.feeds = loadFeedsFromDisk();
+        } catch (FeedNotFoundException e) {
+            throw new FeedNotFoundException();
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+
+    }
+
 }

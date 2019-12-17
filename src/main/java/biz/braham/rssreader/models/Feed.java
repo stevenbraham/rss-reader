@@ -24,5 +24,13 @@ public class Feed {
     public URL getUrl() {
         return url;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
+    }
 }
 
