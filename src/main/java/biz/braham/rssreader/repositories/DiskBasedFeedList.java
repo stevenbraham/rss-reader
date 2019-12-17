@@ -48,9 +48,14 @@ public class DiskBasedFeedList implements FeedsRepository {
                 List<Element> items = document.getRootElement().getChildren();
                 items.forEach(node -> {
                     try {
-                        feeds.add(new Feed(node.getChildText("name"), new URL(node.getChildText("url"))));
+                        //read and parse values from xml
+                        int feedId = Integer.parseInt(node.getChildText("id").replaceAll("\\s+", ""));
+                        String feedName = node.getChildText("name").replaceAll("\\s+", "");
+                        URL feedUrl = new URL(node.getChildText("url").replaceAll("\\s+", ""));
+
+                        feeds.add(new Feed(feedId, feedName, feedUrl));
                     } catch (Exception e) {
-                        e.printStackTrace();
+
                     }
                 });
             } catch (Exception e) {
@@ -69,10 +74,10 @@ public class DiskBasedFeedList implements FeedsRepository {
         Element feedsRoot = new Element("feeds");
 
         feeds.forEach((feed) -> {
-            Element staff = new Element("feed");
-            staff.addContent(new Element("name").setText(feed.getName()));
-            staff.addContent(new Element("url").setText(feed.getUrl().toString()));
-            feedsRoot.addContent(staff);
+            Element feedElement = new Element("feed");
+            feedElement.addContent(new Element("name").setText(feed.getName()));
+            feedElement.addContent(new Element("url").setText(feed.getUrl().toString()));
+            feedsRoot.addContent(feedElement);
         });
 
         //store generated xml file to disk

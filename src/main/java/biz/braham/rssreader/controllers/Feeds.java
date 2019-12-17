@@ -14,7 +14,7 @@ public class Feeds {
     @ShellMethod("List all available feeds")
     public void listFeeds() {
         feedsRepository.getAll().forEach(feed -> {
-            System.out.println(feed.getName());
+            System.out.println("[" + feed.getId() + "]\t" + feed.getName());
         });
     }
 }
