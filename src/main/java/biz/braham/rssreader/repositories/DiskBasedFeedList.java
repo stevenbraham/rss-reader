@@ -1,5 +1,6 @@
 package biz.braham.rssreader.repositories;
 
+import biz.braham.rssreader.exceptions.StoreFeedException;
 import biz.braham.rssreader.models.Feed;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -31,6 +32,22 @@ public class DiskBasedFeedList implements FeedsRepository {
             this.feeds = loadFeedsFromDisk();
         }
         return feeds;
+    }
+
+    @Override
+    public Feed store(String name, URL url) throws StoreFeedException {
+
+        int id = this.getAll().size() + 1;
+        Feed newFeed = new Feed(id, name, url);
+        if (!this.feeds.add(newFeed)) {
+            throw new StoreFeedException();
+        }
+        try {
+            writeToDisk();
+        } catch (Exception e) {
+            throw new StoreFeedException();
+        }
+        return newFeed;
     }
 
     /**
@@ -72,15 +89,19 @@ public class DiskBasedFeedList implements FeedsRepository {
      */
     private void writeToDisk() throws IOException {
         Element feedsRoot = new Element("feeds");
-
-        feeds.forEach((feed) -> {
+        int feedId = 1;
+        for (Feed feed : feeds) {
             Element feedElement = new Element("feed");
+            feedElement.addContent(new Element("id").setText(Integer.toString(feedId)));
             feedElement.addContent(new Element("name").setText(feed.getName()));
             feedElement.addContent(new Element("url").setText(feed.getUrl().toString()));
             feedsRoot.addContent(feedElement);
-        });
+            feedId++;
+        }
 
         //store generated xml file to disk
         new XMLOutputter().output(new Document(feedsRoot), new FileWriter(FEEDS_LOCATION));
     }
+
+
 }
