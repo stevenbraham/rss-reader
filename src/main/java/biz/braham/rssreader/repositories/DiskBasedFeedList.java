@@ -1,5 +1,6 @@
 package biz.braham.rssreader.repositories;
 
+import biz.braham.rssreader.exceptions.FeedNotFoundException;
 import biz.braham.rssreader.exceptions.StoreFeedException;
 import biz.braham.rssreader.models.Feed;
 import org.jdom.Document;
@@ -103,5 +104,40 @@ public class DiskBasedFeedList implements FeedsRepository {
         new XMLOutputter().output(new Document(feedsRoot), new FileWriter(FEEDS_LOCATION));
     }
 
+    /**
+     * Converts a feed id to an actual index in the feed list
+     *
+     * @param feedId
+     * @return
+     * @throws FeedNotFoundException
+     */
+    private int feedIdToIndex(int feedId) throws FeedNotFoundException {
 
+        int index = feedId - 1;
+        if (feedId > getAll().size() || index < 0) {
+            //out of range
+            throw new FeedNotFoundException();
+        }
+        return index;
+    }
+
+    @Override
+    public boolean delete(int feedId) throws FeedNotFoundException {
+        try {
+            //remove feed from internal list, store on disk and update the id list
+            getAll().remove(feedIdToIndex(feedId));
+            writeToDisk();
+            this.feeds = loadFeedsFromDisk();
+        } catch (FeedNotFoundException e) {
+            throw new FeedNotFoundException();
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean delete(Feed feed) throws FeedNotFoundException {
+        return delete(feed.getId());
+    }
 }

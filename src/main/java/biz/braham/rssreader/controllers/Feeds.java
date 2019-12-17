@@ -1,5 +1,6 @@
 package biz.braham.rssreader.controllers;
 
+import biz.braham.rssreader.exceptions.FeedNotFoundException;
 import biz.braham.rssreader.models.Feed;
 import biz.braham.rssreader.repositories.FeedsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +50,23 @@ public class Feeds {
             System.out.println("There was an unexpected error processing your request");
         }
 
+    }
+
+    @ShellMethod("Delete a feed with a given id")
+    public void deleteFeed(int feedId) {
+        try {
+
+            Scanner input = new Scanner(System.in);
+            System.out.println("Are you sure you want to delete this feed?");
+            if (input.nextLine().equals("y")) {
+                feedsRepository.delete(feedId);
+                System.out.println("Feed #" + feedId + " has been deleted");
+            }
+
+        } catch (FeedNotFoundException e) {
+            System.out.println("Feed #" + feedId + " does not exist");
+        } catch (Exception e) {
+            System.out.println("There was an unexpected error processing your request");
+        }
     }
 }
